@@ -55,8 +55,6 @@ package
     private var groundBox:b2PolygonShape
     private var boxes:Vector.<Box2DSprite> = new Vector.<Box2DSprite>()
 
-    include "../TestingCode.as"
-
     public function Boxes(container:DisplayObjectContainer = null)
     {
       CModule.rootSprite = container ? container.root : this
@@ -127,7 +125,6 @@ package
         addChild(bs);
       }
 
-      initTesting();
     }
 
     /**
