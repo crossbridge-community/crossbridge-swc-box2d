@@ -148,6 +148,8 @@ public:
 
 	/// Shift the origin for any points stored in world coordinates.
 	virtual void ShiftOrigin(const b2Vec2& newOrigin) { B2_NOT_USED(newOrigin);  }
+    
+	virtual ~b2Joint() {}
 
 protected:
 	friend class b2World;
@@ -159,7 +161,7 @@ protected:
 	static void Destroy(b2Joint* joint, b2BlockAllocator* allocator);
 
 	b2Joint(const b2JointDef* def);
-	virtual ~b2Joint() {}
+	//virtual ~b2Joint() {}
 
 	virtual void InitVelocityConstraints(const b2SolverData& data) = 0;
 	virtual void SolveVelocityConstraints(const b2SolverData& data) = 0;

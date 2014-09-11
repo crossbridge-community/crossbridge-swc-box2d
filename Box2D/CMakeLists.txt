@@ -25,10 +25,10 @@ if(BOX2D_BUILD_EXAMPLES)
   add_subdirectory(HelloWorld)
 
   # Testbed and dependencies.
-  find_package(OpenGL REQUIRED)
-  add_subdirectory(freeglut)
-  add_subdirectory(glui)
-  add_subdirectory(Testbed)
+  #find_package(OpenGL REQUIRED)
+  #add_subdirectory(freeglut)
+  #add_subdirectory(glui)
+  #add_subdirectory(Testbed)
 endif(BOX2D_BUILD_EXAMPLES)
 
 if(BOX2D_INSTALL_DOC)

@@ -28,11 +28,47 @@
 
 .PHONY: debug clean all 
 
+# Detect host 
+$?UNAME=$(shell uname -s)
+#$(info $(UNAME))
+ifneq (,$(findstring CYGWIN,$(UNAME)))
+	$?nativepath=$(shell cygpath -at mixed $(1))
+	$?unixpath=$(shell cygpath -at unix $(1))
+else
+	$?nativepath=$(abspath $(1))
+	$?unixpath=$(abspath $(1))
+endif
+
+# CrossBridge SDK Home
+ifneq "$(wildcard $(call unixpath,$(FLASCC_ROOT)/sdk))" ""
+ $?FLASCC:=$(call unixpath,$(FLASCC_ROOT)/sdk)
+else
+ $?FLASCC:=/path/to/crossbridge-sdk/
+endif
+$?ASC2=java -jar $(call nativepath,$(FLASCC)/usr/lib/asc2.jar) -merge -md -parallel
+ 
+# Auto Detect AIR/Flex SDKs
+ifneq "$(wildcard $(AIR_HOME)/lib/compiler.jar)" ""
+ $?FLEX=$(AIR_HOME)
+else
+ $?FLEX:=/path/to/adobe-air-sdk/
+endif
+
+# C/CPP Compiler
+$?BASE_CFLAGS=-Werror -Wno-write-strings -Wno-trigraphs
+$?EXTRACFLAGS=
+$?OPT_CFLAGS=-O4
+
+# ASC2 Compiler
+$?MXMLC_DEBUG=true
+$?SWF_VERSION=25
+$?SWF_SIZE=800x600
+
 all: check
 	@echo "------- Example: Box2D --------"
 
 	mkdir -p build
-	cd build && PATH="$(call unixpath,$(FLASCC)/usr/bin):$(PATH)" CC=gcc CXX=g++ CFLAGS="$(OPT_CFLAGS) $(BASE_CFLAGS) $(EXTRACFLAGS)" CXXFLAGS="$(OPT_CFLAGS) $(BASE_CFLAGS) $(EXTRACFLAGS)" cmake ../Box2D_v2.2.1/
+	cd build && PATH="$(call unixpath,$(FLASCC)/usr/bin):$(PATH)" CC=gcc CXX=g++ CFLAGS="$(OPT_CFLAGS) $(BASE_CFLAGS) $(EXTRACFLAGS)" CXXFLAGS="$(OPT_CFLAGS) $(BASE_CFLAGS) $(EXTRACFLAGS)" cmake ../Box2D/
 
 	make recompile
 
@@ -40,9 +76,9 @@ recompile:
 	cd build && PATH="$(call unixpath,$(FLASCC)/usr/bin):$(PATH)" make -j8
 
 	cp -f as3api.h build/
-	cd build && "$(FLASCC)/usr/bin/swig" -as3 -c++ -I../Box2D_v2.2.1/ -DSWIGPP -module Box2D -outdir . -includeall -ignoremissing as3api.h
+	cd build && "$(FLASCC)/usr/bin/swig" -as3 -c++ -I../Box2D/ -DSWIGPP -module Box2D -outdir . -includeall -ignoremissing as3api.h
 	cd build && $(ASC2) -import $(call nativepath,$(FLASCC)/usr/lib/builtin.abc) -import $(call nativepath,$(FLASCC)/usr/lib/playerglobal.abc) Box2D.as
-	cd build && "$(FLASCC)/usr/bin/g++" $(BASE_CFLAGS) $(OPT_CFLAGS) -I../Box2D_v2.2.1/ Box2D.abc as3api_wrap.cxx Box2D/libBox2D.a -emit-swc=sample.Box2D -o ../Box2D.swc $(EXTRACFLAGS)
+	cd build && "$(FLASCC)/usr/bin/g++" $(BASE_CFLAGS) $(OPT_CFLAGS) -I../Box2D/ Box2D.abc as3api_wrap.cxx Box2D/libBox2D.a -emit-swc=sample.Box2D -o ../Box2D.swc $(EXTRACFLAGS)
 
 	make swfs
 
@@ -51,9 +87,17 @@ swfs:
 	"$(FLEX)/bin/mxmlc" -library-path=Box2D.swc -debug=$(MXMLC_DEBUG) Boxes.as -o Boxes.swf
 
 debug:
-	make T12 OPT_CFLAGS="-O0 -g" MXMLC_DEBUG=true
+	make all OPT_CFLAGS="-O0 -g" MXMLC_DEBUG=true
 
-include Makefile.common
+# Self check
+check:
+	@if [ -d $(FLASCC)/usr/bin ] ; then true ; \
+	else echo "Couldn't locate CrossBridge SDK directory, please invoke make with \"make FLASCC=/path/to/CrossBridge/ ...\"" ; exit 1 ; \
+	fi
+	@if [ -d "$(FLEX)/bin" ] ; then true ; \
+	else echo "Couldn't locate Adobe AIR or Apache Flex SDK directory, please invoke make with \"make FLEX=/path/to/AirOrFlex  ...\"" ; exit 1 ; \
+	fi
+	@echo "ASC2: $(ASC2)"
 
 clean:
 	rm -rf build *.swf *.swc 

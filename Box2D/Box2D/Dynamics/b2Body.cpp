@@ -202,7 +202,7 @@ b2Fixture* b2Body::CreateFixture(const b2FixtureDef* def)
 	return fixture;
 }
 
-b2Fixture* b2Body::CreateFixture(const b2Shape* shape, float32 density)
+b2Fixture* b2Body::CreateFixture2(const b2Shape* shape, float32 density)
 {
 	b2FixtureDef def;
 	def.shape = shape;
