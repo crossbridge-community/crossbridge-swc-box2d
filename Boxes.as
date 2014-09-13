@@ -41,8 +41,8 @@ package
   import flash.text.TextField;
   import flash.utils.ByteArray;
 
-  import sample.Box2D.CModule;
-  import sample.Box2D.vfs.ISpecialFile;
+  import crossbridge.Box2D.CModule;
+  import crossbridge.Box2D.vfs.ISpecialFile;
   import Box2DSprite;
 
   /**

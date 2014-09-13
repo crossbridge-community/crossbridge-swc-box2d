@@ -61,7 +61,7 @@ $?OPT_CFLAGS=-O4
 
 # ASC2 Compiler
 $?MXMLC_DEBUG=true
-$?SWF_VERSION=25
+$?SWF_VERSION=26
 $?SWF_SIZE=800x600
 
 all: check
@@ -78,13 +78,13 @@ recompile:
 	cp -f as3api.h build/
 	cd build && "$(FLASCC)/usr/bin/swig" -as3 -c++ -I../Box2D/ -DSWIGPP -module Box2D -outdir . -includeall -ignoremissing as3api.h
 	cd build && $(ASC2) -import $(call nativepath,$(FLASCC)/usr/lib/builtin.abc) -import $(call nativepath,$(FLASCC)/usr/lib/playerglobal.abc) Box2D.as
-	cd build && "$(FLASCC)/usr/bin/g++" $(BASE_CFLAGS) $(OPT_CFLAGS) -I../Box2D/ Box2D.abc as3api_wrap.cxx Box2D/libBox2D.a -emit-swc=sample.Box2D -o ../Box2D.swc $(EXTRACFLAGS)
+	cd build && "$(FLASCC)/usr/bin/g++" $(BASE_CFLAGS) $(OPT_CFLAGS) -I../Box2D/ Box2D.abc as3api_wrap.cxx Box2D/libBox2D.a -emit-swc=crossbridge.Box2D -o ../release/crossbridge-box2d.swc $(EXTRACFLAGS)
 
 	make swfs
 
 swfs:
-	"$(FLEX)/bin/mxmlc" -library-path=Box2D.swc -debug=$(MXMLC_DEBUG) HelloWorld.as -o HelloWorld.swf
-	"$(FLEX)/bin/mxmlc" -library-path=Box2D.swc -debug=$(MXMLC_DEBUG) Boxes.as -o Boxes.swf
+	"$(FLEX)/bin/mxmlc" -library-path=release/crossbridge-box2d.swc -debug=$(MXMLC_DEBUG) HelloWorld.as -o bin/HelloWorld.swf
+	"$(FLEX)/bin/mxmlc" -library-path=release/crossbridge-box2d.swc -debug=$(MXMLC_DEBUG) Boxes.as -o bin/Boxes.swf
 
 debug:
 	make all OPT_CFLAGS="-O0 -g" MXMLC_DEBUG=true

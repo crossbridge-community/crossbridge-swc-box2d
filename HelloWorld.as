@@ -40,7 +40,7 @@ package
   import flash.net.LocalConnection;
   import flash.net.URLRequest;
   import flash.events.Event;
-  import sample.Box2D.CModule;
+  import crossbridge.Box2D.CModule;
   import b2Vec2;
   import b2World;
 
