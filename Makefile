@@ -83,8 +83,8 @@ recompile:
 	make swfs
 
 swfs:
-	"$(FLEX)/bin/mxmlc" -library-path=release/crossbridge-box2d.swc -debug=$(MXMLC_DEBUG) HelloWorld.as -o bin/HelloWorld.swf
-	"$(FLEX)/bin/mxmlc" -library-path=release/crossbridge-box2d.swc -debug=$(MXMLC_DEBUG) Boxes.as -o bin/Boxes.swf
+	"$(FLEX)/bin/mxmlc" -source-path+=src/main/actionscript -library-path+=release/crossbridge-box2d.swc -debug=$(MXMLC_DEBUG) src/main/actionscript/HelloWorld.as -o bin/HelloWorld.swf
+	"$(FLEX)/bin/mxmlc" -source-path+=src/main/actionscript -library-path+=release/crossbridge-box2d.swc -debug=$(MXMLC_DEBUG) src/main/actionscript/Boxes.as -o bin/Boxes.swf
 
 debug:
 	make all OPT_CFLAGS="-O0 -g" MXMLC_DEBUG=true
