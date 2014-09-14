@@ -3,6 +3,8 @@ crossbridge-swc-box2d
 
 [![Build Status](https://travis-ci.org/crossbridge-community/crossbridge-swc-box2d.svg?branch=master)](https://travis-ci.org/crossbridge-community/crossbridge-swc-box2d)
 
+[Example](http://www.vpmedia.hu/crossbridge/box2d/)
+
 ## Building the library
 
 1. Install [Adobe AIR SDK](https://www.adobe.com/devnet/air/air-sdk-download.html)
