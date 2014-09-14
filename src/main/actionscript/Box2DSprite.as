@@ -27,66 +27,62 @@
  * =END MIT LICENSE
  *
  */
-package
-{
-  import flash.display.Sprite;
-  import flash.display.Stage;
-  import flash.geom.Matrix;
+package {
+import flash.display.Sprite;
+import flash.geom.Matrix;
 
-  public class Box2DSprite extends Sprite
-  {
-    private var bodyDef:b2BodyDef
-    private var bodyDefPos:b2Vec2
-    private var body:b2Body
-    private var dynamicBox:b2PolygonShape
-    private var fixtureDef:b2FixtureDef
+public class Box2DSprite extends Sprite {
+    private var bodyDef:b2BodyDef;
+    private var bodyDefPos:b2Vec2;
+    private var body:b2Body;
+    private var dynamicBox:b2PolygonShape;
+    private var fixtureDef:b2FixtureDef;
     private var w:Number, h:Number;
+    private var cachedMatrix:Matrix = new Matrix();
 
-    public function Box2DSprite(_x:Number, _y:Number, _w:Number, _h:Number, world:b2World)
-    {
-      w = _w;
-      h = _h;
+    public function Box2DSprite(_x:Number, _y:Number, _w:Number, _h:Number, world:b2World) {
+        w = _w;
+        h = _h;
 
-      graphics.lineStyle(0.25,0x000000);
-      graphics.beginFill(0, 0.2);
-      graphics.drawRect(0, 0, _w, _h);
-      graphics.endFill();
+        graphics.lineStyle(0.25, 0x000000);
+        graphics.beginFill(0, 0.2);
+        graphics.drawRect(0, 0, _w, _h);
+        graphics.endFill();
 
-      // Define the dynamic body. We set its position and call the body factory.
-      bodyDef = b2BodyDef.create();
-      bodyDef.type = Box2D.b2_dynamicBody;
-      bodyDefPos = b2Vec2.create()
-      bodyDefPos.Set(_x/10, _y/10);
-      bodyDef.position = bodyDefPos.swigCPtr;
-      body = new b2Body();
-      body.swigCPtr = world.CreateBody(bodyDef.swigCPtr);
+        // Define the dynamic body. We set its position and call the body factory.
+        bodyDef = b2BodyDef.create();
+        bodyDef.type = Box2D.b2_dynamicBody;
+        bodyDefPos = b2Vec2.create()
+        bodyDefPos.Set(_x / 10, _y / 10);
+        bodyDef.position = bodyDefPos.swigCPtr;
+        body = new b2Body();
+        body.swigCPtr = world.CreateBody(bodyDef.swigCPtr);
 
-      // Define another box shape for our dynamic body.
-      dynamicBox = b2PolygonShape.create();
-      dynamicBox.SetAsBox(_w/20, _h/20);
+        // Define another box shape for our dynamic body.
+        dynamicBox = b2PolygonShape.create();
+        dynamicBox.SetAsBox(_w / 20, _h / 20);
 
-      // Define the dynamic body fixture.
-      fixtureDef = b2FixtureDef.create();
-      fixtureDef.shape = dynamicBox.swigCPtr;
+        // Define the dynamic body fixture.
+        fixtureDef = b2FixtureDef.create();
+        fixtureDef.shape = dynamicBox.swigCPtr;
 
-      // Set the box density to be non-zero, so it will be dynamic.
-      fixtureDef.density = 1.0;
+        // Set the box density to be non-zero, so it will be dynamic.
+        fixtureDef.density = 1.0;
 
-      // Override the default friction.
-      fixtureDef.friction = 0.3;
+        // Override the default friction.
+        fixtureDef.friction = 0.3;
 
-      // Add the shape to the body.
-      body.CreateFixture(fixtureDef.swigCPtr);
+        // Add the shape to the body.
+        body.CreateFixture(fixtureDef.swigCPtr);
     }
 
-    public function update():void
-    {
-      bodyDefPos.swigCPtr = body.GetPosition();
-      var matrix:Matrix = new Matrix() 
-      matrix.translate(- w/2, - (h/2));
-      matrix.rotate(-body.GetAngle());
-      matrix.translate((bodyDefPos.x*10) + w/2, (stage.stageHeight + (h/2)) - (bodyDefPos.y*10));
-      transform.matrix = matrix;
+    public function update():void {
+        bodyDefPos.swigCPtr = body.GetPosition();
+        cachedMatrix.identity();
+        cachedMatrix.translate(-w / 2, -(h / 2));
+        cachedMatrix.rotate(-body.GetAngle());
+        cachedMatrix.translate((bodyDefPos.x * 10) + w / 2, (stage.stageHeight + (h / 2)) - (bodyDefPos.y * 10));
+        transform.matrix = cachedMatrix;
     }
-  }
+}
 }
